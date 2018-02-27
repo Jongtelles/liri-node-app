@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/Jongtelles/liri-node-app/issues"
   },
-  "homepage": "https://github.com/Jongtelles/liri-node-app#readme"
+  "homepage": "https://github.com/Jongtelles/liri-node-app#readme",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "request": "^2.83.0",
+    "spotify-web-api-node": "^2.5.0",
+    "twitter": "^1.7.1"
+  }
 }
