@@ -85,7 +85,7 @@ let doWhatItSays = () => {
             return console.log(error);
         }
         let dataArr = data.split(",");
-        console.log(`${dataArr[0]} ${dataArr[1]}`);
+        console.log(`${dataArr[0]} ${dataArr[1]} ${dataArr[2]}`);
     });
 }
 
