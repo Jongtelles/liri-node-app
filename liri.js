@@ -79,14 +79,21 @@ Actors: ${JSON.parse(body).Actors}`
     });
 }
 
+let dataArr = [];
+
 let doWhatItSays = () => {
     fs.readFile("random.txt", "utf8", (error, data) => {
         if (error) {
             return console.log(error);
         }
-        let dataArr = data.split(",");
+        dataArr = data.split(",");
         console.log(`${dataArr[0]} ${dataArr[1]} ${dataArr[2]}`);
+        doer();
     });
+}
+
+let doer = () => {
+    dataArr[0];
 }
 
 let switchKey = process.argv[2];
