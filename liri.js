@@ -3,11 +3,20 @@ const keys = require('./keys.js');
 const twitter = require('twitter');
 const request = require('request');
 const SpotifyWebApi = require('spotify-web-api-node');
+const fs = require('fs');
 
 let spotifyApi = new SpotifyWebApi({
     clientId: keys.spotify.id,
     clientSecret: keys.spotify.secret
 });
+
+// spotifyApi.clientCredentialsGrant()
+//     .then((data) => {
+//         spotifyApi.setAccessToken(data.body['access_token']);
+//     }, (err) => {
+//         console.log('Something went wrong when retrieving an access token', err);
+//     });
+
 let client = new twitter(keys.twitter);
 let params = {
     screen_name: 'liribot2018'
@@ -22,32 +31,29 @@ let myTweets = () => {
         }
     });
 }
-
-// spotifyApi.clientCredentialsGrant()
-//     .then(function (data) {
-//         console.log('The access token expires in ' + data.body['expires_in']);
-//         console.log('The access token is ' + data.body['access_token']);
-
-//         // Save the access token so that it's used in future calls
-//         spotifyApi.setAccessToken(data.body['access_token']);
-//     }, function (err) {
-//         console.log('Something went wrong when retrieving an access token', err.message);
-//     });
-
-// let spotifyThisSong = () => {
-//     let searchInput = process.argv[3];
-//     spotifyApi.search(searchInput, ['track'], {
-//             limit: 5,
-//             offset: 1
-//         })
-//         .then(function (data) {
-//             console.log(data.body);
-//         }, function (err) {
-//             console.error(err);
-//         });
-// }
-
 let nodeArgs = process.argv;
+let searchInput = "";
+
+let spotifyThisSong = () => {
+
+    for (let i = 3; i < nodeArgs.length; i++) {
+        if (i > 3 && i < nodeArgs.length) {
+            searchInput = searchInput + "+" + nodeArgs[i];
+        } else {
+            searchInput += nodeArgs[i];
+        }
+    }
+    spotifyApi.search(searchInput, ['track'], {
+            limit: 5,
+            offset: 1
+        })
+        .then((data) => {
+            console.log(data.body);
+        }, (err) => {
+            console.error(err);
+        });
+}
+
 let movieName = "";
 
 let movieThis = () => {
@@ -62,8 +68,7 @@ let movieThis = () => {
     request(queryUrl, (error, response, body) => {
         if (!error) {
             console.log(
-
-`Title: ${JSON.parse(body).Title}
+                `Title: ${JSON.parse(body).Title}
 Year: ${JSON.parse(body).Year}
 IMDB Rating: ${JSON.parse(body).imdbRating}
 Rotten Tomatoes Rating: ${JSON.parse(body).Ratings[1].Value}
@@ -77,9 +82,16 @@ Actors: ${JSON.parse(body).Actors}`
         }
     });
 }
-// let doWhatItSays = () => {
 
-// }
+let doWhatItSays = () => {
+    fs.readFile("random.txt", "utf8", (error, data) => {
+        if (error) {
+            return console.log(error);
+        }
+        let dataArr = data.split(",");
+        console.log(`${dataArr[0]} ${dataArr[1]}`);
+    });
+}
 
 let switchKey = process.argv[2];
 
@@ -100,6 +112,6 @@ switch (switchKey) {
         doWhatItSays();
         break;
     default:
-        console.log("Please enter a valid command (my-tweets, spotify-this-song, movie-this, do-what-it-says).");
+        console.log(`Please enter a valid command (my-tweets, spotify-this-song, movie-this, do-what-it-says).`);
         break;
 }
