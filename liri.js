@@ -2,20 +2,13 @@ require("dotenv").config();
 const keys = require('./keys.js');
 const twitter = require('twitter');
 const request = require('request');
-const SpotifyWebApi = require('spotify-web-api-node');
+const spotify = require('node-spotify-api');
 const fs = require('fs');
 
-let spotifyApi = new SpotifyWebApi({
-    clientId: keys.spotify.id,
-    clientSecret: keys.spotify.secret
+let spotifyApi = new spotify({
+    id: keys.spotify.id,
+    secret: keys.spotify.secret
 });
-
-// spotifyApi.clientCredentialsGrant()
-//     .then((data) => {
-//         spotifyApi.setAccessToken(data.body['access_token']);
-//     }, (err) => {
-//         console.log('Something went wrong when retrieving an access token', err);
-//     });
 
 let client = new twitter(keys.twitter);
 let params = {
@@ -26,7 +19,7 @@ let myTweets = () => {
     client.get('statuses/user_timeline', params, (error, tweets, response) => {
         if (!error) {
             for (let i = 0; i < tweets.length; i++) {
-                console.log(`Tweet #${[i]}: ${tweets[i].text}`);
+                console.log(`Tweet #${(i + 1)}: ${tweets[i].text}`);
             }
         }
     });
@@ -35,7 +28,6 @@ let nodeArgs = process.argv;
 let searchInput = "";
 
 let spotifyThisSong = () => {
-
     for (let i = 3; i < nodeArgs.length; i++) {
         if (i > 3 && i < nodeArgs.length) {
             searchInput = searchInput + "+" + nodeArgs[i];
@@ -43,15 +35,19 @@ let spotifyThisSong = () => {
             searchInput += nodeArgs[i];
         }
     }
-    spotifyApi.search(searchInput, ['track'], {
-            limit: 5,
-            offset: 1
-        })
-        .then((data) => {
-            console.log(data.body);
-        }, (err) => {
-            console.error(err);
-        });
+    spotifyApi.search({
+        type: 'track',
+        query: `${searchInput}`,
+        limit: 3
+    }, (err, data) => {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+        console.log(`Title: ${data.tracks.items[0].name}`);
+        console.log(`Artist: ${data.tracks.items[0].artists[0].name}`);
+        console.log(`Album: ${data.tracks.items[0].album.name}`);
+        console.log(`Preview link: ${data.tracks.items[0].preview_url}`);
+    });
 }
 
 let movieName = "";
