@@ -88,12 +88,7 @@ let doWhatItSays = () => {
         }
         dataArr = data.split(",");
         console.log(`${dataArr[0]} ${dataArr[1]} ${dataArr[2]}`);
-        doer();
     });
-}
-
-let doer = () => {
-    dataArr[0];
 }
 
 let switchKey = process.argv[2];
