@@ -19,7 +19,7 @@ let myTweets = () => {
     client.get('statuses/user_timeline', params, (error, tweets, response) => {
         if (!error) {
             for (let i = 0; i < tweets.length; i++) {
-                console.log(`Tweet #${(i + 1)}: ${tweets[i].text}`);
+                console.log(`Tweet #${(i + 1)}: Created: ${tweets[i].created_at} ${tweets[i].text}`);
             }
         }
     });
@@ -30,7 +30,7 @@ let searchInput = "";
 let spotifyThisSong = () => {
     for (let i = 3; i < nodeArgs.length; i++) {
         if (i > 3 && i < nodeArgs.length) {
-            searchInput = searchInput + "+" + nodeArgs[i];
+            searchInput = `${searchInput}+${nodeArgs[i]}`;
         } else {
             searchInput += nodeArgs[i];
         }
@@ -38,15 +38,15 @@ let spotifyThisSong = () => {
     spotifyApi.search({
         type: 'track',
         query: `${searchInput}`,
-        limit: 3
+        limit: 1
     }, (err, data) => {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
-        console.log(`Title: ${data.tracks.items[0].name}`);
-        console.log(`Artist: ${data.tracks.items[0].artists[0].name}`);
-        console.log(`Album: ${data.tracks.items[0].album.name}`);
-        console.log(`Preview link: ${data.tracks.items[0].preview_url}`);
+        console.log(`Title: ${data.tracks.items[0].name}
+Artist: ${data.tracks.items[0].artists[0].name}
+Album: ${data.tracks.items[0].album.name}
+Preview link: ${data.tracks.items[0].preview_url}`);
     });
 }
 
@@ -55,7 +55,7 @@ let movieName = "";
 let movieThis = () => {
     for (let i = 3; i < nodeArgs.length; i++) {
         if (i > 3 && i < nodeArgs.length) {
-            movieName = movieName + "+" + nodeArgs[i];
+            movieName = `${movieName}+${nodeArgs[i]}`;
         } else {
             movieName += nodeArgs[i];
         }
@@ -80,6 +80,8 @@ Actors: ${JSON.parse(body).Actors}`
 }
 
 let dataArr = [];
+let switchArg = "";
+let fileInput = "";
 
 let doWhatItSays = () => {
     fs.readFile("random.txt", "utf8", (error, data) => {
@@ -87,8 +89,32 @@ let doWhatItSays = () => {
             return console.log(error);
         }
         dataArr = data.split(",");
-        console.log(`${dataArr[0]} ${dataArr[1]} ${dataArr[2]}`);
+        switchArg = dataArr[0];
+        fileInput = dataArr[1];
+        doer(switchArg);
     });
+}
+
+let doer = (switchArg) => {
+    switch (switchArg) {
+        case "my-tweets":
+            myTweets();
+            break;
+
+        case "spotify-this-song":
+            searchInput = fileInput;
+            spotifyThisSong();
+            break;
+
+        case "movie-this":
+            movieName = fileInput;
+            movieThis();
+            break;
+
+        default:
+            console.log(`Please enter a valid command (my-tweets, spotify-this-song, movie-this, do-what-it-says).`);
+            break;
+    }
 }
 
 let switchKey = process.argv[2];
@@ -99,10 +125,16 @@ switch (switchKey) {
         break;
 
     case "spotify-this-song":
+        if (searchInput == "") {
+            searchInput = "The Sign Ace of Base";
+        }
         spotifyThisSong();
         break;
 
     case "movie-this":
+        if (movieName == "") {
+            movieName = "Mr Nobody";
+        }
         movieThis();
         break;
 
