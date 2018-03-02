@@ -1,6 +1,7 @@
 # liri-node-app
+A node app that interfaces with Twitter, Spotify, and OMDB APIs
 
-## A node app that allows you to chooose from four different commands:
+### A node app that allows you to chooose from four different commands:
 * mytweets: Displays recent tweets from a dummy account set up for the app (@liribot2018)
 * spotify-this-song: Displays the song title, artist, album, and a preview link
 * movie-this: Displays 
